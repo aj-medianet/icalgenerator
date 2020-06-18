@@ -7,6 +7,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "bootstrap": "^4.5.0",
+    "file-saver": "^2.0.2",
     "generate-calendar-url": "^1.0.0",
     "ics": "^2.22.1",
     "jquery": "^3.4.1",

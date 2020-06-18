@@ -1,0 +1,21 @@
+# development docker-compose file
+version: '3'
+
+services:
+
+  frontend:
+    image: ical-react-frontend
+    stdin_open: true
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ical-react-frontend
+    restart: always
+    volumes:
+      - './:/opt/app'
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+    command: npm start
+

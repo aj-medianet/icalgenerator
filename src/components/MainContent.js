@@ -43,18 +43,22 @@ class MainContent extends Component {
     this.setState({ isLoading: false })
   }
 
-
-
   onSubmit = e => {
     e.preventDefault();
     this.setState({ errMessage: "" })
     this.setState({ isLoading: true })
 
-    console.log(this.state.timeZone)
+    console.log(Date())
+
+    console.log("before")
+    console.log(this.state.startYear + '-' + this.state.startMonth + '-' + this.state.startDay + 'T' + this.state.startHour + ':' + this.state.startMinutes)
+    console.log(this.state.endYear + '-' + this.state.endMonth + '-' + this.state.endDay + 'T' + this.state.endHour + ':' + this.state.endMinutes)
+    
     // get start/end date & time with timezone -> convert to utc & format for input into ical generator
     let sd = moment.tz(this.state.startYear + '-' + this.state.startMonth + '-' + this.state.startDay + 'T' + this.state.startHour + ':' + this.state.startMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
     let ed = moment.tz(this.state.endYear + '-' + this.state.endMonth + '-' + this.state.endDay + 'T' + this.state.endHour + ':' + this.state.endMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
 
+    console.log('after')
     console.log(sd)
     console.log(ed)
 
@@ -87,6 +91,7 @@ class MainContent extends Component {
 
     const icsData = {
       start: sd,
+      startInputType: "utc",
       end: ed,
       productId: 'ics generator',
       title: this.state.eventName,

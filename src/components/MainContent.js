@@ -48,19 +48,9 @@ class MainContent extends Component {
     this.setState({ errMessage: "" })
     this.setState({ isLoading: true })
 
-    console.log(Date())
-
-    console.log("before")
-    console.log(this.state.startYear + '-' + this.state.startMonth + '-' + this.state.startDay + 'T' + this.state.startHour + ':' + this.state.startMinutes)
-    console.log(this.state.endYear + '-' + this.state.endMonth + '-' + this.state.endDay + 'T' + this.state.endHour + ':' + this.state.endMinutes)
-    
     // get start/end date & time with timezone -> convert to utc & format for input into ical generator
     let sd = moment.tz(this.state.startYear + '-' + this.state.startMonth + '-' + this.state.startDay + 'T' + this.state.startHour + ':' + this.state.startMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
     let ed = moment.tz(this.state.endYear + '-' + this.state.endMonth + '-' + this.state.endDay + 'T' + this.state.endHour + ':' + this.state.endMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
-
-    console.log('after')
-    console.log(sd)
-    console.log(ed)
 
     //make sure dates are valid
     if (!moment(sd, 'YYYY-MM-DD-HH-mm').isValid()) {
@@ -106,7 +96,7 @@ class MainContent extends Component {
 
     ics.createEvent(icsData, (error, value) => {
       if (error) {
-        console.log(error);
+        //console.log(error);
         this.throwError("There was an error creating the ICS & VCS files. Please try again.")
       } else {
         //write ics & vcs files to user
@@ -133,7 +123,6 @@ class MainContent extends Component {
     let blobGoogle = new Blob([cal.google(googleData)], { type: "text/plain;charset=utf-8" });
     saveAs(blobGoogle, this.state.eventID + "-google-cal.txt")
     
-
     this.setState({ isLoading: false })
   }
 

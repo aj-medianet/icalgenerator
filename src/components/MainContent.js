@@ -5,6 +5,7 @@ import Spinner from 'react-bootstrap/Spinner'
 import moment from 'moment-timezone'
 import { saveAs } from 'file-saver';
 const ics = require('ics');
+const cal = require('generate-calendar-url');
 
 class MainContent extends Component {
   constructor() {
@@ -49,9 +50,13 @@ class MainContent extends Component {
     this.setState({ errMessage: "" })
     this.setState({ isLoading: true })
 
+    console.log(this.state.timeZone)
     // get start/end date & time with timezone -> convert to utc & format for input into ical generator
     let sd = moment.tz(this.state.startYear + '-' + this.state.startMonth + '-' + this.state.startDay + 'T' + this.state.startHour + ':' + this.state.startMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
     let ed = moment.tz(this.state.endYear + '-' + this.state.endMonth + '-' + this.state.endDay + 'T' + this.state.endHour + ':' + this.state.endMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
+
+    console.log(sd)
+    console.log(ed)
 
     //make sure dates are valid
     if (!moment(sd, 'YYYY-MM-DD-HH-mm').isValid()) {
@@ -73,9 +78,6 @@ class MainContent extends Component {
       return false
     }
 
-    if (sd[4] === "00") { sd[4] = "0"}
-    if (ed[4] === "00") { ed[4] = "0"}
-
     //set up trigger
     let alarms = [];
     alarms.push({
@@ -93,24 +95,42 @@ class MainContent extends Component {
       alarms: alarms
     }
 
+    // fix weird safe integer error ics is throwing
+    icsData.start[4] = parseInt(icsData.start[4])
+    icsData.end[4] = parseInt(icsData.end[4])
+
     ics.createEvent(icsData, (error, value) => {
       if (error) {
         console.log(error);
+        this.throwError("There was an error creating the ICS & VCS files. Please try again.")
       } else {
         //write ics & vcs files to user
-        let blob = new Blob(["Hello, world!"], { type: "text/plain;charset=utf-8" });
-        saveAs(blob, this.state.eventID + ".txt");
-
-
+        let blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+        saveAs(blob, this.state.eventID + ".ics");
+        saveAs(blob, this.state.eventID + ".vcs");
         this.setState({ isLoading: false })
       }
     })
 
-    this.setState({isLoading: false})
+    //format start & end dates for google url gen
+    let googleStart = moment(icsData.start, 'YYYY-MM-DD-HH-mm').format();
+    let googleEnd = moment(icsData.end, 'YYYY-MM-DD-HH-mm').format();
+
+    let googleData = {
+      title: this.state.eventName,
+      start: new Date(googleStart),
+      end: new Date(googleEnd),
+      location: this.state.location,
+      description: this.state.eventDescription
+    }
+
+    //create google cal text file
+    let blobGoogle = new Blob([cal.google(googleData)], { type: "text/plain;charset=utf-8" });
+    saveAs(blobGoogle, this.state.eventID + "-google-cal.txt")
+    
+
+    this.setState({ isLoading: false })
   }
-
-
-
 
   LoadingSpinner = () => {
     return this.state.isLoading ? <Spinner className="ml-2" animation="border" variant="success" /> : ''
@@ -362,8 +382,8 @@ class MainContent extends Component {
                 <Form.Group>
                   <Form.Label>Start Minutes</Form.Label>
                   <Form.Control onChange={this.changeHandler} className="w-50" as="select" name="startMinutes">
-                    <option value="0">00</option>
-                    <option value="5">05</option>
+                    <option value="00">00</option>
+                    <option value="05">05</option>
                     <option value="10">10</option>
                     <option value="15">15</option>
                     <option value="20">20</option>

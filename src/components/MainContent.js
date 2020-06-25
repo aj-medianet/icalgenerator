@@ -4,7 +4,6 @@ import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import moment from 'moment-timezone'
 import { saveAs } from 'file-saver';
-import { googleCalendarEventUrl } from 'google-calendar-url';
 const ics = require('ics');
 const cal = require('generate-calendar-url');
 

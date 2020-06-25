@@ -4,8 +4,10 @@ import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import moment from 'moment-timezone'
 import { saveAs } from 'file-saver';
+import { googleCalendarEventUrl } from 'google-calendar-url';
 const ics = require('ics');
 const cal = require('generate-calendar-url');
+
 
 class MainContent extends Component {
   constructor() {
@@ -47,6 +49,8 @@ class MainContent extends Component {
     e.preventDefault();
     this.setState({ errMessage: "" })
     this.setState({ isLoading: true })
+
+    moment.tz.setDefault("UTC") // fixes timezone being off in google cal
 
     // get start/end date & time with timezone -> convert to utc & format for input into ical generator
     let sd = moment.tz(this.state.startYear + '-' + this.state.startMonth + '-' + this.state.startDay + 'T' + this.state.startHour + ':' + this.state.startMinutes, this.state.timeZone).utc().format('YYYY-MM-DD-HH-mm').split('-');
@@ -108,8 +112,8 @@ class MainContent extends Component {
     })
 
     //format start & end dates for google url gen
-    let googleStart = moment(icsData.start, 'YYYY-MM-DD-HH-mm').format();
-    let googleEnd = moment(icsData.end, 'YYYY-MM-DD-HH-mm').format();
+    let googleStart = moment(icsData.start, 'YYYY-MM-DD-HH-mm Z').format();
+    let googleEnd = moment(icsData.end, 'YYYY-MM-DD-HH-mm Z').format();
 
     let googleData = {
       title: this.state.eventName,

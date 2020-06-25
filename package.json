@@ -9,6 +9,7 @@
     "bootstrap": "^4.5.0",
     "file-saver": "^2.0.2",
     "generate-calendar-url": "^1.0.0",
+    "google-calendar-url": "0.0.5",
     "ics": "^2.22.1",
     "jquery": "^3.4.1",
     "jszip": "^3.5.0",

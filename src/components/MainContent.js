@@ -93,23 +93,15 @@ class MainContent extends Component {
       alarms: alarms
     }
 
-    for (var i in sd) {
-      console.log(sd[i]);
-    }
-
     // fix weird safe integer error ics is throwing
     icsData.start[3] = parseInt(icsData.start[3])
     icsData.start[4] = parseInt(icsData.start[4])
     icsData.end[3] = parseInt(icsData.end[3])
     icsData.end[4] = parseInt(icsData.end[4])
 
-    for (var j in sd) {
-      console.log(sd[j]);
-    }
-
     ics.createEvent(icsData, (error, value) => {
       if (error) {
-        console.log(error);
+        //console.log(error);
         this.throwError("There was an error creating the ICS & VCS files. Please try again.")
       } else {
         //write ics & vcs files to user
